@@ -1,0 +1,41 @@
+---
+  - name: Update apt
+    apt:
+      update_cache: true
+      cache_valid_time: 3600
+
+  - name: Enable IPv4 fowarding
+    sysctl:
+      name: net.ipv4.ip_forward
+      value: 1
+      sysctl_set: yes
+      state: present
+      reload: yes 
+
+  - name: Install iptables persisent
+    apt:
+      name: iptables-persistent
+      state: latest
+
+  - name: Configure port forwarding
+    iptables:
+      table: nat
+      action: append
+      chain: PREROUTING
+      protocol: tcp
+      destination_port: "{{ item }}"
+      jump: DNAT
+      to_destination: "{{ comm_server_ip }}:{{ comm_server_port }}"
+    with_items: "{{ redirection_ports }}"
+
+  - name: Enable masquerade
+    iptables:
+      table: nat
+      action: append
+      out_interface: "{{ public_interface }}" # Required or it breaks resolved
+      chain: POSTROUTING
+      jump: MASQUERADE
+  
+  - name: Save iptables rules
+    shell:
+      cmd: "iptables-save > /etc/iptables/rules.v4"

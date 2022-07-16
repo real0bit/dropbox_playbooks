@@ -1,0 +1,88 @@
+---
+  - name: Disable IPv6 on C2 interfaces
+    sysctl:
+      name: net.ipv6.conf.{{ item }}.disable_ipv6
+      value: '1'
+      state: present
+    with_items: "{{ c2_interfaces }}"
+  
+  #- name: Install prerequisites
+  #  apt:
+  #    name: ['python3','python3-netifaces', 'python3-nmap', 'nmap', 'openvpn', 'logrotate', 'openssh-server']
+  #    update_cache: yes
+  #    cache_valid_time: 3600
+
+  - name: Ensure the SSH server runs and is enabled by default
+    systemd:
+      name: ssh
+      enabled: yes
+      state: started
+
+  - name: Make dropbox directory
+    file:
+      path: "{{ dropbox_dir }}"
+      state: directory
+
+  #- name: Generate static configuration file
+  #  template:
+  #    src: static.cfg.j2
+  #    dest: "{{ dropbox_dir }}/static.cfg"
+  #    owner: root
+  #    group: root
+  #    mode: 0600
+
+  - name: Copy dropbox OpenVPN configuration
+    copy:
+      src: dropbox.ovpn
+      dest: "{{dropbox_dir }}/dropbox.ovpn"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Copy dropbox script
+    copy:
+      src: phonehome_p3.py
+      dest: "{{ dropbox_dir }}/phonehome_p3.py"
+      owner: root
+      group: root
+      mode: 0700
+
+  - name: Touch the phonehome log so it exists
+    file:
+      dest: "{{ log_file_name }}"
+      state: touch
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Enable log rotation for the phonehome log
+    template:
+      src: rotate.j2
+      dest: /etc/logrotate.d/phonehome
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Ensure crontab PATH is set
+    cron:
+      env: yes
+      name: PATH
+      job: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
+      user: root
+
+  - name: Create crontab entry for the phonehome script
+    cron:
+      minute: "*/3"
+      name: PATH
+      job: "{{ dropbox_dir }}/phonehome_p3.py {{ dropbox_dir }}/static.cfg"
+      user: root
+
+  - name: Disable suspension and hibernation
+    systemd:
+      name: "{{ item }}"
+      masked: yes
+    with_items:
+      - sleep.target
+      - suspend.target
+      - hibernate.target
+      - hybrid-sleep.target

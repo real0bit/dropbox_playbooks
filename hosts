@@ -1,0 +1,10 @@
+[vpnserver]
+18.207.187.214 ansible_user=ubuntu ansible_become=True
+
+[redirectors]
+<REDIRECTOR IP> ansible_user=ubuntu ansible_become=True
+<REDIRECTOR IP> ansible_user=ubuntu ansible_become=True
+<REDIRECTOR_IP> ansible_user=ubuntu ansible_become=True
+
+[dropbox]
+<DROPBOX_IP> ansible_user=user ansible_become=True ansible_python_interpreter=/usr/bin/python3

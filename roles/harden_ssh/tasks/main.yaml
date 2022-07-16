@@ -1,0 +1,31 @@
+---
+- name: Disable SSH password authentication
+  become: true
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regex: '^(\s+)?PasswordAuthentication\s'
+    line: 'PasswordAuthentication no'
+    state: present
+
+- name: Disable Protocol v1
+  become: true
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regex: '^(\s+)?Protocol\s'
+    line: 'Protocol 2'
+    state: present
+
+- name: Disable Root Login 
+  become: true
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regex: '^(\s+)?PermitRootLogin\s'
+    line: 'PermitRootLogin no'
+    state: present
+
+
+- name: Restart SSH
+  become: true
+  systemd:
+    name: ssh
+    state: restarted

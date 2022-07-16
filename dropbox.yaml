@@ -1,0 +1,29 @@
+---
+#Prep dropbox
+- hosts: dropbox
+  gather_facts: true
+
+  vars:
+    c2_interfaces:
+      - wlan0
+    redir_0_hostname: 
+    redir_0_ip: 
+    redir_1_hostname: 
+    redir_1_ip: 
+    redir_2_hostname:
+    redir_2_ip:
+    target_network_interface: 
+    first_c2_interface_name: 
+    first_c2_interface_type: 
+    c2_wireless_ssid: 
+    c2_wireless_password: 
+    twilio_account: 
+    twilio_token:
+    twilio_from:
+    notify_numbers:
+    device_id: 
+
+
+
+  roles:
+    - role: dropbox

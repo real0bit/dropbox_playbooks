@@ -1,0 +1,23 @@
+---
+vpn_file_name: vpn.ovpn
+log_file_name: /var/log/phonehome.log
+dropbox_dir: /opt/phonehome
+dynamic_cfg_name: dynamic.cfg
+
+num_redirectors: 3
+deadman_time: 14400 #8 hours
+use_hostnames: y
+vpn_file_template: dropbox.ovpn
+cnc_ports: 443,465,563,636,993,995,8443
+cnc_fallback_port: 443
+
+dynamic_config_expiration_time: 2592000 #30 days
+delete_dynamic_config_on_boot: y
+delete_dynamic_config_on_boot_threshold: 300
+
+number_of_c2_interfaces: 1
+backup_c2_nameserver: 8.8.8.8
+
+status_notification_threshold: 28800 # Eight hours
+failure_notification_threshold: 600 # Ten minutes
+

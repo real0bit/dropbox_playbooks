@@ -1,0 +1,76 @@
+---
+#Configure VPN server
+- hosts: vpnserver
+  gather_facts: true
+
+  vars:
+    comm_server_port: 443
+    comm_proto: tcp
+
+  roles: 
+    - role: kyl191.openvpn
+      firewalld_default_interface_zone: home
+      openvpn_port: "{{ comm_server_port }}"
+      openvpn_proto: "{{ comm_proto }}"
+      openvpn_redirect_gateway: false
+      openvpn_set_dns: false
+      openvpn_client_to_client: true
+      openvpn_client_register_dns: False
+      openvpn_fetch_client_configs: True
+      openvpn_fetch_client_configs_dir: ./client_configs/
+      openvpn_topology: subnet
+      clients:
+        - dropbox
+        - consultant1
+        - consultant2
+        - consultant3
+
+  tasks:
+    - name: Create comm server variable file for redirectors task
+      template:
+        src: ./templates/comm_server.yaml.j2
+        dest: ./roles/redirector/vars/main.yaml
+      delegate_to: localhost
+
+    - name: Create comm server variable file for redirectors_obfsproxy task
+      template:
+        src: ./templates/comm_server.yaml.j2
+        dest: ./roles/redirector_obfsproxy/vars/main.yaml
+      delegate_to: localhost
+
+      
+    - name: Copy vpn to dropbox files
+      copy:
+        src: ./client_configs/dropbox/{{ inventory_hostname }}.ovpn
+        dest: ./roles/dropbox/files/dropbox.ovpn
+      delegate_to: localhost
+
+#    - name: Create user for autossh connection from redirectors
+#      user:
+#        name: autosshuser
+#
+ #   - name: Generate SSH key for autossh autosshuser
+ #     openssh_keypair:
+ #       path: ./roles/redirector/files/autossh_key
+ #       type: rsa
+ #       size: 4096
+ #       state: present
+ #     delegate_to: localhost
+#
+#   - name: Make .ssh for autosshuser
+#      file:
+#        path: /home/autosshuser/.ssh
+#        state: directory
+#        group: autosshuser
+#        owner: autosshuser
+#        mode: 0700
+#
+#    - name: Copy the generated public key to autosshuser's authorized_key files
+#      copy:
+#        src: ./roles/redirector/files/autossh_key.pub
+#        dest: /home/autosshuser/.ssh/authorized_keys
+#        owner: autosshuser
+#        group: autosshuser
+#        mode: 0600
+
+

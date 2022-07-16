@@ -1,0 +1,12 @@
+---
+
+redirection_ports:
+  - 443
+  - 465
+  - 563
+  - 636
+  - 993
+  - 995
+  - 8443
+
+public_interface: eth0

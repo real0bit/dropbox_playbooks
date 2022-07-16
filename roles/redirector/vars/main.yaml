@@ -1,0 +1,4 @@
+---
+comm_server_port: 443
+comm_server_ip: 18.207.187.214
+comm_proto: tcp

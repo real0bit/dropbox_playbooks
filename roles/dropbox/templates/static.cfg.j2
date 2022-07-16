@@ -1,0 +1,47 @@
+[files]
+phone_home_dir = {{ dropbox_dir }}
+vpn_file_name = {{ vpn_file_name }}
+log_file_name = {{ log_file_name }}
+dynamic_file_name = {{ dynamic_cfg_name }}
+
+[cnc]
+num_redirectors = {{ num_redirectors }}
+deadman_reboot = {{ deadman_time }}
+use_hostnames = {{ use_hostnames }}
+redir_vpn_config_0 = {{ vpn_file_template }}
+redir_hostname_0 = {{ redir_0_hostname }}
+redir_backup_ip_0 = {{ redir_0_ip }}
+redir_vpn_config_1 = {{ vpn_file_template }}
+redir_hostname_1 = {{ redir_1_hostname }}
+redir_backup_ip_1 = {{ redir_1_ip }}
+redir_hostname_2 = {{ redir_2_hostname }}
+redir_backup_ip_2 = {{ redir_2_ip }}
+redir_vpn_config_2 = {{ vpn_file_template }}
+cnc_ports_init = {{ cnc_ports }}
+cnc_fallback_port = {{ cnc_fallback_port }}
+exp_time = {{ dynamic_config_expiration_time }}
+delete_on_boot = {{ delete_dynamic_config_on_boot }}
+delete_on_boot_thresh = {{  delete_dynamic_config_on_boot_threshold }}
+num_cnc_ints = {{ number_of_c2_interfaces }}
+
+[interfaces]
+default_ns = {{ backup_c2_nameserver }}
+targ_net_int = {{ target_network_interface }}
+
+[cnc_int_0]
+name = {{ first_c2_interface_name }}
+type = {{ first_c2_interface_type }}
+max_retries = 0
+
+[wireless_cnc]
+wireless_cnc_ssid = {{ c2_wireless_ssid }}
+wireless_cnc_wpa_key = {{ c2_wireless_password }}
+
+[notify]
+twilio_account = {{ twilio_account }}
+twilio_token = {{ twilio_token }}
+twilio_from = {{ twilio_from }}
+notify_numbers = {{ notify_numbers }}
+status_tresh = {{ status_notification_threshold }}
+fail_thresh = {{ failure_notification_threshold }}
+device_id = {{ device_id }}
