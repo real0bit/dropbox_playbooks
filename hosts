@@ -1,5 +1,5 @@
 [vpnserver]
-18.207.187.214 ansible_user=ubuntu ansible_become=True
+<VPN_SERVER_IP> ansible_user=ubuntu ansible_become=True
 
 [redirectors]
 <REDIRECTOR IP> ansible_user=ubuntu ansible_become=True
