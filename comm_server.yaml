@@ -39,11 +39,11 @@
       delegate_to: localhost
 
       
-    - name: Copy vpn to dropbox files
-      copy:
-        src: ./client_configs/dropbox/{{ inventory_hostname }}.ovpn
-        dest: ./roles/dropbox/files/dropbox.ovpn
-      delegate_to: localhost
+#    - name: Copy vpn to dropbox files
+#      copy:
+#        src: ./client_configs/dropbox/{{ inventory_hostname }}.ovpn
+#        dest: ./roles/dropbox/files/dropbox.ovpn
+#      delegate_to: localhost
 
 #    - name: Create user for autossh connection from redirectors
 #      user:
