@@ -614,6 +614,45 @@ def get_primary_int_settings_netifaces():
 		log_write("get_primary_int_settings_netifaces failed to find primary interface settings")
 		return False
 
+def block_redir_on_interface(redir_num, interface):
+	redir_string = "redirector_" + str(redir_num)
+
+	# Get the redirector IP from dynamic config
+	redir_ip = DYNAMIC_SETTINGS[redir_string]['hostname_ip']
+
+	# Didn't get the redirector IP for some reason? Use the IP from the static config.
+	if not is_ip(redir_ip):
+		redir_ip = STATIC_SETTINGS['cnc']['redir_backup_ip_' + str(redir_num)]
+
+
+	if is_ip(redir_ip):
+		cmd = "iptables -A OUTPUT -d " + redir_ip + "-i " + interface + " -j DROP"
+		log_write("Dropping " + redir_string + " on " + interface + " " + cmd)
+		os.popen(cmd)
+		return True
+	else:
+		return False
+
+def unblock_redir_on_interface(redir_num, interface):
+	redir_string = "redirector_" + str(redir_num)
+
+	# Get the redirector IP from dynamic config
+	redir_ip = DYNAMIC_SETTINGS[redir_string]['hostname_ip']
+
+	# Didn't get the redirector IP for some reason? Use the IP from the static config.
+	if not is_ip(redir_ip):
+		redir_ip = STATIC_SETTINGS['cnc']['redir_backup_ip_' + str(redir_num)]
+
+
+	if is_ip(redir_ip):
+		cmd = "iptables -D OUTPUT -d " + redir_ip + "-i " + interface + " -j DROP"
+		log_write("Unblocking " + redir_string + " on " + interface + ": " + cmd)
+		os.popen(cmd)
+		return True
+	else:
+		return False
+
+
 # Uses syslog primarily to pull lease info. Less risky than netifaces as it's passive.
 def get_primary_int_settings_syslog():
 	global STATIC_SETTINGS
@@ -943,9 +982,13 @@ def find_interface_gateway(interface):
 	if not gateway:
 		log_write("Unable to find gateway. Assuming the gateway is at x.x.x.1")
 		ip = find_interface_ip(interface)
-		split = ip.split(".")
-		gateway = split[0] + "." + split[1] + "." + split[2] + ".1"
-		log_write("Assumed gateway IP: " + gateway)
+		if is_ip(ip):
+			split = ip.split(".")
+			gateway = split[0] + "." + split[1] + "." + split[2] + ".1"
+			log_write("Assumed gateway IP: " + gateway)
+		else:
+			log_write("Interface " + interface + "does not have an IP")
+			gateway = ""
 
 	return gateway
 
